@@ -1,0 +1,6 @@
+func int main (){
+if(rahmat == pogi) {
+	rahmat = false;
+	nikki = "rahmat is love";
+}
+}

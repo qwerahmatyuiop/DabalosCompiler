@@ -1,0 +1,188 @@
+translation_unit 								//start
+	: external_declaration
+	| translation_unit external_declaration
+	;
+
+external_declaration
+	: function_definition
+	| declaration
+	;
+
+function_definition
+	: func type_specifier IDENTIFIER '(' parameters ')' compound_statement
+	;
+
+parameters
+	: type_specifier IDENTIFIER
+	| parameters type_specifier IDENTIFIER
+	i
+
+expression
+	: assignment_expression
+	;
+
+assignment_expression
+	: logical_or_expression
+	| postfix_expression assignment_operator assignment_expression
+	;
+
+assignment_operator
+	: '='
+	| MUL_ASSIGN
+	| DIV_ASSIGN
+	| MOD_ASSIGN
+	| ADD_ASSIGN
+	| SUB_ASSIGN
+	;
+
+postfix_expression
+	: primary_expression
+	| postfix_expression '[' expression ']'
+	;
+
+primary_expression
+	: IDENTIFIER
+	| INT_LITERAL
+	| FLOAT_LITERAL
+	| STRING_LITERAL
+	| BOOLEAN_LITERAL
+	;
+
+logical_or_expression
+	: logical_and_expression
+	| logical_or_expression OR_OP logical_and_expression
+	;
+logical_and_expression
+	: equality_expression
+	| logical_and_expression AND_OP equality_expression
+	;
+equality_expression
+	:additive_expression
+	| equality_expression EQ_OP additive_expression
+	| equality_expression NE_OP additive_expression
+	;
+additive_expression
+	: multiplicative_expression
+	| additive_expression '+' multiplicative_expression
+	| additive_expression '-' multiplicative_expression
+	;
+multiplicative_expression
+	: postfix_expression
+	| multiplicative_expression '*' postfix_expression
+	| multiplicative_expression '/' postfix_expression
+	| multiplicative_expression '%' postfix_expression
+	;
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+declaration
+	 type_specifier init_declarator_list ';'
+	;
+
+init_declarator_list
+	: init_declarator
+	| init_declarator_list ',' init_declarator
+	;
+
+init_declarator
+	: declarator
+	| declarator '=' initializer
+	;
+
+
+declarator
+	: IDENTIFIER
+	| '(' declarator ')'
+	| declarator '[' assignment_expression ']'
+	;
+
+initializer
+	: assignment_expression
+
+
+type_specifier
+	: VOID
+	| CHAR
+	| STRING
+	| INT
+	| BOOLEAN
+	| FLOAT
+	;
+
+
+statement
+	: compound_statement
+	| expression_statement
+	| selection_statement
+	| iteration_statement
+	| jump_statement
+	;
+
+compound_statement
+	: '{' '}'
+	| '{' block_item_list '}'
+	;
+
+block_item_list
+	: block_item
+	| block_item_list block_item
+	;
+
+block_item
+	: declaration
+	| statement
+	;
+
+expression_statement
+	: ';'
+	| expression ';'
+	;
+
+selection_statement
+	: IF '(' expression ')' statement
+	| IF '(' expression ')' statement ELSE statement
+	;
+
+iteration_statement
+	: WHILE '(' expression ')' statement
+	;
+
+jump_statement
+	| CONTINUE ';'
+	| BREAK ';'
+	| RETURN ';'
+	| RETURN expression ';'
+	;
+
+TERMINALS
+
+"+="			 ADD_ASSIGN
+"-="			 SUB_ASSIGN
+"*="			 MUL_ASSIGN
+"/="			 DIV_ASSIGN
+"%="			 MOD_ASSIGN
+"&="			 AND_ASSIGN
+"^="			 XOR_ASSIGN
+"|="			 OR_ASSIGN
+">>"			 RIGHT_OP
+"<<"			 LEFT_OP
+"++"			 INC_OP
+"--"			 DEC_OP
+"->"			 PTR_OP
+"&&"			 AND_OP
+"||"			 OR_OP
+"<="			 LE_OP
+">="			 GE_OP
+"=="			 EQ_OP
+"!="			 NE_OP
+";"			 ';'
+
+
+[a-zA-Z][a-zA-Z0-9_]*	IDENTIFIER
+(-)?[0-9]+				INT LITERAL
+(-)?[0-9]+\.[0-9]+		FLOAT LITERAL
+(true|false)			BOOLEAN LITERAL
+\"\w\" 					CHAR LITERAL
+\".*\"					STRING LITERAL
+
+(int|String|Char|Boolean|float) TYPE
