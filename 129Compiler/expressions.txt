@@ -13,8 +13,8 @@ function_definition
 	;
 
 parameters
-	: type_specifier IDENTIFIER
-	| parameters type_specifier IDENTIFIER
+	: type_specifier declarator
+	| parameters type_specifier declarator
 	i
 
 expression
@@ -60,6 +60,10 @@ equality_expression
 	:additive_expression
 	| equality_expression EQ_OP additive_expression
 	| equality_expression NE_OP additive_expression
+	|equality_expression GR_EQ additive_expression
+	| equality_expression LE_EQ additive_expression
+	|equality_expression GR additive_expression
+	| equality_expression LE additive_expression
 	;
 additive_expression
 	: multiplicative_expression
@@ -153,7 +157,13 @@ jump_statement
 	| RETURN ';'
 	| RETURN expression ';'
 	;
-
+print_statement
+	: print '(' input_file ')' ';'
+	;
+input_file
+	:STDIN
+	| expression
+	;
 TERMINALS
 
 "+="			 ADD_ASSIGN
@@ -162,11 +172,6 @@ TERMINALS
 "/="			 DIV_ASSIGN
 "%="			 MOD_ASSIGN
 "&="			 AND_ASSIGN
-"^="			 XOR_ASSIGN
-"|="			 OR_ASSIGN
-">>"			 RIGHT_OP
-"<<"			 LEFT_OP
-"++"			 INC_OP
 "--"			 DEC_OP
 "->"			 PTR_OP
 "&&"			 AND_OP
@@ -175,6 +180,10 @@ TERMINALS
 ">="			 GE_OP
 "=="			 EQ_OP
 "!="			 NE_OP
+">"
+"<"
+">="
+"<="
 ";"			 ';'
 
 

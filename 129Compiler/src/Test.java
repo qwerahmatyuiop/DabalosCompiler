@@ -58,14 +58,21 @@ public class Test {
 		  	tokenizer.add("\\|\\|", 31);
 		  	
 		  	
+		  	tokenizer.add("(-)?[0-9]+", 43); 
+		  	tokenizer.add("(-)?[0-9]+\\.[0-9]+", 44);//float
+		  	tokenizer.add("--", 50);
+		  	tokenizer.add("\\+\\+", 51);
 		  	tokenizer.add("=", 32);
 		  	tokenizer.add("\\%=", 33);
 		  	tokenizer.add("\\+=", 34);
 		  	tokenizer.add("\\-=", 35);
 		  	tokenizer.add("\\*=", 36);
 		  	tokenizer.add("\\/=", 37);
-		    tokenizer.add("\\+|-", 38); //add and minus
-		    tokenizer.add("\\*|/|%", 39); 
+		    tokenizer.add("\\+", 380); //add and minus
+		    tokenizer.add("-", 381); //add and minus
+		    tokenizer.add("\\*", 390); 
+		    tokenizer.add("/", 391); 
+		    tokenizer.add("%", 392); 
 		    
 		  	
 		  
@@ -77,8 +84,8 @@ public class Test {
 			tokenizer.add("true", 40);
 		  	tokenizer.add("false", 41);
 		  	tokenizer.add("[a-zA-Z][a-zA-Z0-9_]*", 42); //identifier
-		  	tokenizer.add("(-)?[0-9]+", 43); //int
-		  	tokenizer.add("(-)?[0-9]+\\.[0-9]+", 44);//float
+		  	//int
+		  	
 		  	tokenizer.add("\".*\"",45);
 		  	String code = "";
 			String line = "";
