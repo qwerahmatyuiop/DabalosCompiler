@@ -2,7 +2,7 @@ package Nodes;
 
 import java.util.LinkedList;
 
-public abstract class SequenceExpressionNode {
+public abstract class SequenceExpressionNode implements Node {
 	protected LinkedList<Term> terms;
 
 	  public SequenceExpressionNode() {
@@ -17,7 +17,5 @@ public abstract class SequenceExpressionNode {
 	  public void add(Node a, int operator) {
 	    this.terms.add(new Term(operator, a));
 	  }
-	  public String getDataType(){
-		  return this.terms.get(0).expression.getDataType();
-	  }
+	  
 }

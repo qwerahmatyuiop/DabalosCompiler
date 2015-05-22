@@ -17,15 +17,41 @@ public class AdditiveExpressionNode extends SequenceExpressionNode {
 	  }
 
 	  public Object getValue() {
-	    Double sum = 0.0;
-	    String dataType = "";
-	    for (Term t : terms) {
-	     dataType = t.expression.getDataType();
-	     switch(t.operator){
-	     case Token.PLUS: sum += (dataType == "Integer") ? (int) t.expression.getValue() : (float) t.expression.getValue() ; break;
-	     case Token.MINUS: sum -= (dataType == "Integer") ? (int) t.expression.getValue() : (float) t.expression.getValue(); break;
-	     }
-	    }
-	    return (dataType == "Integer")? sum.intValue(): sum.floatValue();
+		  int i = 0;
+		  if(terms.getFirst().expression.getValue() instanceof Integer){
+			  int result = 0;
+			  i = 0;
+			  for(Term t: terms){
+				  if(i == 0){
+					  result = (Integer) t.expression.getValue();
+					  i++;
+					  continue;
+				  }
+				  switch(t.operator){
+				  case Token.PLUS: result += (Integer) t.expression.getValue(); break;
+				  case Token.MINUS: result -= (Integer) t.expression.getValue(); break;
+				  }
+				  i++;
+			  }
+			  return result;
+		  }
+		  else{
+			  float result = 0;
+			  i = 0;
+			  for(Term t: terms){
+				  if(i == 0){
+					  result = (Float) t.expression.getValue();
+					  i++;
+					  continue;
+				  }
+				  switch(t.operator){
+				  case Token.PLUS: result += (Float) t.expression.getValue(); break;
+				  case Token.MINUS: result -= (Float) t.expression.getValue(); break;
+				  }
+				  i++;
+			  }
+			  return result;
+		  }
 	  }
+
 }

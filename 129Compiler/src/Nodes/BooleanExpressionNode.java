@@ -9,6 +9,10 @@ public class BooleanExpressionNode implements Node {
 		super();
 		this.value = value;
 	}
+	public BooleanExpressionNode(String value) {
+		super();
+		this.value = Boolean.valueOf(value);
+	}
 	@Override
 	public int getType() {
 		// TODO Auto-generated method stub
@@ -19,11 +23,6 @@ public class BooleanExpressionNode implements Node {
 	public Boolean getValue() {
 		// TODO Auto-generated method stub
 		return value;
-	}
-	@Override
-	public String getDataType() {
-		// TODO Auto-generated method stub
-		return "Boolean";
 	}
 
 }

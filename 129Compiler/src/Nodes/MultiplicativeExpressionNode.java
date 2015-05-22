@@ -17,16 +17,44 @@ public class MultiplicativeExpressionNode extends SequenceExpressionNode {
 	  }
 
 	  public Object getValue() {
-		    Double product = 1.0;
-		    String dataType = "";
-		    int i = 0;
-		    for (Term t : terms) {
-		    dataType = t.expression.getDataType();		  
-		    switch(t.operator){
-		    case Token.MULT: product *= (dataType == "Integer") ? (int) t.expression.getValue() : (float) t.expression.getValue(); break;
-		    case Token.DIV: product /=  (dataType == "Integer") ? (int) t.expression.getValue() : (float) t.expression.getValue(); break;
-	     }
-	    }
-		  return  (dataType == "Integer")? product.intValue(): product.floatValue();
+		  int i = 0;
+		  if(terms.getFirst().expression.getValue() instanceof Integer){
+			  int result = (Integer) terms.getFirst().expression.getValue();
+			  i = 0;
+			  for(Term t: terms){
+				  if(i == 0){
+					  result = (Integer) t.expression.getValue();
+					  i++;
+					  continue;
+				  }
+				  switch(t.operator){
+				  case Token.MULT: result *= (Integer) t.expression.getValue(); break;
+				  case Token.DIV: result /= (Integer) t.expression.getValue(); break;
+				  case Token.MOD: result %= (Integer) t.expression.getValue(); break;
+				  }
+				  
+				  i++;
+			  }
+			  return result;
+		  }
+		  else{
+			  float result = 0;
+			  i = 0;
+			  for(Term t: terms){
+				  if(i == 0){
+					  result = (Float) t.expression.getValue();
+					  i++;
+					  continue;
+				  }
+				  switch(t.operator){
+				  case Token.MULT: result *= (Float) t.expression.getValue(); break;
+				  case Token.DIV: result /= (Float) t.expression.getValue(); break;
+				  case Token.MOD: result %= (Float) t.expression.getValue(); break;
+				  }
+				  i++;
+			  }
+			  return result;
+		  }
 	  }
+
 }

@@ -25,10 +25,5 @@ public class IntegerExpressionNode implements Node {
 		// TODO Auto-generated method stub
 		return value;
 	}
-	@Override
-	public String getDataType() {
-		// TODO Auto-generated method stub
-		return "Integer";
-	}
 
 }

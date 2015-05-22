@@ -23,7 +23,7 @@ expression
 
 assignment_expression
 	: logical_or_expression
-	| postfix_expression assignment_operator assignment_expression
+	| IDENTIFIER assignment_operator assignment_expression
 	;
 
 assignment_operator
@@ -38,6 +38,8 @@ assignment_operator
 postfix_expression
 	: primary_expression
 	| postfix_expression '[' expression ']'
+	| postfix_expression INC_OP
+	| postfix_expression DEC_PO
 	;
 
 primary_expression
@@ -50,31 +52,31 @@ primary_expression
 
 logical_or_expression
 	: logical_and_expression
-	| logical_or_expression OR_OP logical_and_expression
+	| logical_and_expression {{OR_OP logical_and_expression}
 	;
 logical_and_expression
 	: equality_expression
-	| logical_and_expression AND_OP equality_expression
+	| equality_expression {{AND_OP equality_expression}
 	;
 equality_expression
-	:additive_expression
-	| equality_expression EQ_OP additive_expression
-	| equality_expression NE_OP additive_expression
-	|equality_expression GR_EQ additive_expression
-	| equality_expression LE_EQ additive_expression
-	|equality_expression GR additive_expression
-	| equality_expression LE additive_expression
+	: additive_expression
+	| additive_expression {{EQ_OP additive_expression}
+	| additive_expression {{NE_OP additive_expression}
+	| additive_expression {{GR_EQ additive_expression}
+	| additive_expression {{LE_EQ additive_expression}
+	| additive_expression {{GR additive_expression}
+	| additive_expression {{LE additive_expression}
 	;
 additive_expression
 	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression
-	| additive_expression '-' multiplicative_expression
+	| multiplicative_expression {{'+' multiplicative_expression}
+	| multiplicative_expression {{'-' multiplicative_expression}
 	;
 multiplicative_expression
 	: postfix_expression
-	| multiplicative_expression '*' postfix_expression
-	| multiplicative_expression '/' postfix_expression
-	| multiplicative_expression '%' postfix_expression
+	| postfix_expression {{ '*' postfix_expression}
+	| postfix_expression {{ '/' postfix_expression}
+	| postfix_expression {{ '%' postfix_expression}
 	;
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 

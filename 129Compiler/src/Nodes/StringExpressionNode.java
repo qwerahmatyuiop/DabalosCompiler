@@ -21,10 +21,5 @@ public class StringExpressionNode implements Node {
 		return value;
 	}
 
-	@Override
-	public String getDataType() {
-		// TODO Auto-generated method stub
-		return "String";
-	}
 
 }

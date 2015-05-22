@@ -38,11 +38,4 @@ public class IdentifierExpressionNode implements Node{
 		this.dataType = dataType;
 	}
 
-	@Override
-	public String getDataType() {
-		// TODO Auto-generated method stub
-		return dataType;
-	}
-	
-
 }
