@@ -25,5 +25,4 @@ public class IntegerExpressionNode implements Node {
 		// TODO Auto-generated method stub
 		return value;
 	}
-
 }

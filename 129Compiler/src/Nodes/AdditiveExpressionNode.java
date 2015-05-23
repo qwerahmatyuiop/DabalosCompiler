@@ -53,5 +53,4 @@ public class AdditiveExpressionNode extends SequenceExpressionNode {
 			  return result;
 		  }
 	  }
-
 }

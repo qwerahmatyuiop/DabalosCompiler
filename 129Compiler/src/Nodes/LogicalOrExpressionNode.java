@@ -26,5 +26,6 @@ public class LogicalOrExpressionNode implements Node {
 		// TODO Auto-generated method stub
 		return ((Boolean)left.getValue() ||  (Boolean)right.getValue()) ? true: false;
 	}
+
 	
 }

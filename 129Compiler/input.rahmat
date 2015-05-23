@@ -1,2 +1,26 @@
-1 < 10 || 10 > 3;
-10;
+GLOBAL int rahmat = 9, r = 10;
+GLOBAL int in = 1;
+
+func int rahmats(){
+if( 2 > 3){
+print("Hello World");
+}else{
+	if(10 > 3){
+	print("Goodbye world!");
+	}
+	else{
+	print("Goodbye world2!");
+	}
+}
+}
+func int counto(){
+	print("counto");
+	if(in == 1){
+		print("zero");
+	}else{
+		print("tan");
+	}
+}
+call counto();
+
+

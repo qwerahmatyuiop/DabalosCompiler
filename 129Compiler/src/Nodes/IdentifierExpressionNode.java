@@ -8,6 +8,7 @@ public class IdentifierExpressionNode implements Node{
 	private boolean valueSet;
 	private String dataType;
 	
+
 	public IdentifierExpressionNode(String name) {
 		super();
 		this.name = name;
@@ -29,7 +30,13 @@ public class IdentifierExpressionNode implements Node{
 		      throw new EvaluationException("Variable '" 
 		        + name + "' was not initialized.");
 	}
-
+	public String getName(){
+		return this.name;
+	}
+	public void setValue(Object value){
+		this.value = value;
+		valueSet = true;
+	}
 	public String getdataType() {
 		return this.dataType;
 	}
@@ -37,5 +44,6 @@ public class IdentifierExpressionNode implements Node{
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
+
 
 }

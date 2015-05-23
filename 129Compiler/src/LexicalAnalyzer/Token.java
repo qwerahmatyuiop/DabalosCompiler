@@ -43,11 +43,6 @@ package LexicalAnalyzer;
 		  
 		  
 		public static final int ASSIGN = 32;
-		public static final int MOD_ASSIGN = 33;
-		public static final int ADD_ASSIGN = 34;
-		public static final int SUB_ASSIGN = 35;
-		public static final int MUL_ASSIGN = 36;
-		public static final int DIV_ASSIGN = 37;
 		public static final int PLUS= 380;
 		public static final int MINUS= 381;
 		public static final int MULT= 390;
@@ -66,10 +61,13 @@ package LexicalAnalyzer;
 		public static final int PRINT = 46;
 		public static final int SCAN = 47;
 		public static final int FUNC = 48;
+
+		public static final int GLOBAL = 52;
 		public static final int STDIN = 49;
 		
 		public static final int INC_OP = 50;
 		public static final int DEC_OP = 51;
+		public static final int CALL = 53;
 		
 		
 		public final int token;

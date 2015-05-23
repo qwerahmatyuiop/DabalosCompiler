@@ -20,6 +20,4 @@ public class StringExpressionNode implements Node {
 		// TODO Auto-generated method stub
 		return value;
 	}
-
-
 }

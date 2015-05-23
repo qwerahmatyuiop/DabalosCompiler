@@ -25,7 +25,4 @@ public class FloatExpressionNode implements Node {
 		// TODO Auto-generated method stub
 		return value;
 	}
-
-	
-
 }
