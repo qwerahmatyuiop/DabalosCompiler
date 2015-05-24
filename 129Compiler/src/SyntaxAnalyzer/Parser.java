@@ -2,6 +2,7 @@ package SyntaxAnalyzer;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Stack;
 
 import Exceptions.EvaluationException;
@@ -25,7 +26,6 @@ public class Parser {
 	LinkedList<Token> funcStatements = new LinkedList<Token>();
 	LinkedList<Token> tokens;
 	LinkedList<Function> functionCalls = new LinkedList<Function>();
-	LinkedList<Token> iter = new LinkedList<Token>();
 	
 	  Token lookahead;
 	 LinkedList<IdentifierExpressionNode> symbols = new LinkedList<IdentifierExpressionNode>();
@@ -225,12 +225,21 @@ public class Parser {
 		
 	}
 	  private Node assignment_expression(){
-		Node ae = logical_or_expression();
-		if(ae.getType() == Node.IDENTIFIER_NODE){
-			if(lookahead.token == Token.ASSIGN){
-			  ae = assignment_operator(ae);
-			}
-		}
+		Node ae;
+		  if(lookahead.token == Token.REVERSE){
+			  ae = reverse_expression();
+		  }
+		  else if(lookahead.token == Token.SCAN){
+			  ae = scan_expression();
+		  }
+		  else{
+			  ae = logical_or_expression();
+			  if(ae.getType() == Node.IDENTIFIER_NODE){
+				  if(lookahead.token == Token.ASSIGN){
+					  ae = assignment_operator(ae);
+				  }
+			  }
+		  }
 		return ae;
 	}
 	  private Node assignment_operator(Node ae){
@@ -561,9 +570,6 @@ public class Parser {
 		else if(lookahead.token == Token.PRINTLN){
 			println_statement();
 		}
-		else if(lookahead.token == Token.SCAN){
-			scan_statement();
-		}
 		else if(lookahead.token == Token.CALL){
 			call_statement();
 		}
@@ -571,6 +577,35 @@ public class Parser {
 			expression_statement();
 		}
 	}
+	  private Node reverse_expression() {
+		  nextToken();
+		  String rev = "";
+		  String temp = "";
+		  Node es = new StringExpressionNode(rev);
+		  if(lookahead.token == Token.OPEN_PAREN){
+			  nextToken();
+			  if(lookahead.token == Token.IDENTIFIER){
+				 Node ss = primary_expression();
+				 temp = ss.getValue().toString();
+			  }else if (lookahead.token == Token.STRING){
+				  temp = lookahead.sequence;
+				  nextToken();
+			  }else{
+				//error
+			  }
+				for( int i = temp.length()-1 ; i >= 0; i--){
+					rev += temp.charAt(i);
+				}
+			  es = new StringExpressionNode(rev);
+		  
+			  if(lookahead.token == Token.CLOSE_PAREN){
+					nextToken();
+				}
+		  }else{
+			  //error
+		  }
+		return es;
+	  }
 	  private void call_statement() {
 		nextToken();
 		
@@ -606,11 +641,18 @@ public class Parser {
 			}
 		}
 		if(es.getType() == Node.STRING_NODE){
+			String printer = "";
 			String esp = (String)es.getValue();
-			System.out.print(esp);
+			for(char s: esp.toCharArray()){
+				if(s != '"'){
+					printer += s;
+				}
+			}
+			
+			System.out.print(printer);
 		}
 		else{
-			System.out.print(es.getValue());
+			System.out.print(es.getValue().toString());
 		}
 	}
 	  private void println_statement() {
@@ -622,6 +664,7 @@ public class Parser {
 					nextToken();
 				}else{
 					es = assignment_expression();
+				
 				}
 				if(lookahead.token == Token.CLOSE_PAREN){
 					nextToken();
@@ -631,25 +674,46 @@ public class Parser {
 				}
 			}
 			if(es.getType() == Node.STRING_NODE){
+				String printer = "";
 				String esp = (String)es.getValue();
-				System.out.println(esp);
+				for(char s: esp.toCharArray()){
+					if(s != '"'){
+						printer += s;
+					}
+				}
+				
+				System.out.println(printer);
 			}
 			else{
-				System.out.println(es.getValue());
+				System.out.println(es.getValue().toString());
 			}
 		}
-	  private void scan_statement(){
+	  private Node scan_expression(){
 		  nextToken();
 		  if(lookahead.token == Token.OPEN_PAREN){
 			  nextToken();
-			  if(lookahead.token == Token.IDENTIFIER){
-				  
-			  }else{
+			  if(lookahead.token == Token.CLOSE_PAREN){
+				  nextToken();
+			  }
+			  else{
 				  //error
 			  }
 		  }else{
 			  //error
 		  }
+		  Scanner scan = new Scanner(System.in);
+		  String trys = scan.nextLine();
+		  if(trys.matches("(-)?[0-9]+\\.[0-9]+")){
+			  return new FloatExpressionNode(trys);
+		  }else if(trys.matches("(-)?[0-9]+")){
+			  return new IntegerExpressionNode(trys);
+			  
+		  }
+		  else if(trys.matches("\".[^\"]*\"")){
+			  return new StringExpressionNode(trys);
+		  }
+		  else 
+			  throw new ParserException("Invalid Input");
 	  }
 	  private void jump_statement() {
 		if(lookahead.token == Token.CONTINUE){

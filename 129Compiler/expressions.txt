@@ -113,6 +113,7 @@ statement
 	| jump_statement
 	| scan_statement
 	|print_statement
+	| reverse_statement
 	|println_statement
 	;
 

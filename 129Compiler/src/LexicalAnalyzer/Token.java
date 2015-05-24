@@ -65,6 +65,7 @@ package LexicalAnalyzer;
 
 		public static final int GLOBAL = 52;
 		public static final int STDIN = 49;
+		public static final int REVERSE = 54;
 		
 		public static final int INC_OP = 50;
 		public static final int DEC_OP = 51;

@@ -72,12 +72,13 @@ public class Test {
 		    
 		  	
 		  	 tokenizer.add("\".[^\"]*\"",45);
-		 	tokenizer.add("println", 46);
+		 	tokenizer.add("println", 461);
 		  	tokenizer.add("print", 46);
 		  	tokenizer.add("scan", 47);
 		  	tokenizer.add("func", 48);
 			tokenizer.add("GLOBAL", 52);
 			tokenizer.add("call", 53);
+			tokenizer.add("reverse", 54);
 		  	
 			tokenizer.add("true", 40);
 		  	tokenizer.add("false", 41);

@@ -42,6 +42,11 @@ public class EqualityExpressionNode implements Node {
 				case Token.LE: return (((Float) left.getValue()) < ((Float) right.getValue())) ? true: false;
 				case Token.LE_EQ: return (((Float) left.getValue()) <= ((Float) right.getValue())) ? true: false;
 			}
+		}else if(left.getValue() instanceof String){
+			switch(operator){
+			case Token.EQ_OP: return (left.getValue().equals(right.getValue()))? true: false;
+			case Token.NEG_OP: return (!left.getValue().equals(right.getValue()))? true: false;
+			}
 		}
 		
 		return false;
