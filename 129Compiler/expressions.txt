@@ -111,6 +111,9 @@ statement
 	| selection_statement
 	| iteration_statement
 	| jump_statement
+	| scan_statement
+	|print_statement
+	|println_statement
 	;
 
 compound_statement

@@ -25,10 +25,12 @@ public class Parser {
 	LinkedList<Token> funcStatements = new LinkedList<Token>();
 	LinkedList<Token> tokens;
 	LinkedList<Function> functionCalls = new LinkedList<Function>();
+	LinkedList<Token> iter = new LinkedList<Token>();
 	
 	  Token lookahead;
 	 LinkedList<IdentifierExpressionNode> symbols = new LinkedList<IdentifierExpressionNode>();
 	 Stack<String> stack = new Stack<String>();
+	 Token dum;
 	 Boolean execute = true;
 	public Parser() {
 	}
@@ -42,7 +44,6 @@ public class Parser {
 	    if (lookahead.token != Token.EPSILON)
 	      throw new ParserException("(PARSER)Unexpected symbol "+lookahead.token+" found");
 	  }
-	  
 	  private void entry_point(){
 		  while(lookahead.token != Token.EPSILON){
 		  if(lookahead.token == Token.FUNC || lookahead.token == Token.GLOBAL){
@@ -141,119 +142,6 @@ public class Parser {
 		  }
 		  return sequence;
 	  }
-	  private void statement() {
-		//statement -> compound_statement
-		
-		if(lookahead.token == Token.OPEN_BRACKET){
-			compound_statement();
-		}
-		//statement -> selection_statement
-		else if(lookahead.token == Token.IF){
-			selection_statement();
-		}
-		//statement -> iteration_statement
-		else if(lookahead.token == Token.WHILE){
-			iteration_statement();
-		}
-		//statement -> jump_statement
-		else if(lookahead.token == Token.CONTINUE || lookahead.token == Token.BREAK || lookahead.token == Token.RETURN){
-			jump_statement();
-		}
-		else if(lookahead.token == Token.PRINT){
-			print_statement();
-		}
-		else if(lookahead.token == Token.CALL){
-			call_statement();
-		}
-		else{
-			expression_statement();
-		}
-	}
-	  private void call_statement() {
-		nextToken();
-		
-		for(Function x: functionCalls){
-			if(x.getName().equals(lookahead.sequence)){
-				nextToken();
-				nextToken();
-				nextToken();
-				nextToken();
-				for(Token y: x.getTokens()){
-					tokens.push(y);
-				}
-				compound_statement();
-			}
-		}
-		
-	}
-
-	private void print_statement() {
-		nextToken();
-		Node es = new StringExpressionNode("");
-		if(lookahead.token == Token.OPEN_PAREN){
-			nextToken();
-			if(lookahead.token == Token.STDIN){
-				nextToken();
-			}else{
-				es = assignment_expression();
-			}
-			if(lookahead.token == Token.CLOSE_PAREN){
-				nextToken();
-				if(lookahead.token == Token.SEMI_COLON){
-					nextToken();
-				}
-			}
-		}
-		if(es.getType() == Node.STRING_NODE){
-			es = new StringExpressionNode(es.getValue().toString().replaceAll("\"",""));
-			System.out.print(es.getValue());
-		}
-		else{
-			System.out.println(es.getValue().toString());
-		}
-	}
-	  private void jump_statement() {
-		if(lookahead.token == Token.CONTINUE){
-			nextToken();
-			
-			if(lookahead.token == Token.SEMI_COLON){
-				nextToken();
-			}else
-				throw new ParserException("(JUMP1)Unexpected symbol"+lookahead+" found");
-		}
-		else if(lookahead.token == Token.BREAK){
-			nextToken();
-			if(lookahead.token == Token.SEMI_COLON){
-				nextToken();
-			}else
-				throw new ParserException("(JUMP2)Unexpected symbol"+lookahead+" found");
-			
-		}
-		else if(lookahead.token == Token.RETURN){
-			nextToken();
-			if(lookahead.token != Token.SEMI_COLON){
-				assignment_expression();
-			}
-			if(lookahead.token == Token.SEMI_COLON)
-			nextToken();
-		}
-		else
-			throw new ParserException("(JUMP1)Unexpected symbol"+lookahead+" found");
-
-		
-	}
-	  private void compound_statement() {
-		nextToken();
-		if(lookahead.token == Token.CLOSE_BRACKET){
-			nextToken();
-		}
-		else{
-			block_item_list();
-			if(lookahead.token == Token.CLOSE_BRACKET){
-				nextToken();
-			}
-		}
-	}
 	  private void block_item_list() {
 		block_item();
 		if(lookahead.token != Token.CLOSE_BRACKET)
@@ -649,8 +537,163 @@ public class Parser {
 		  throw new EvaluationException("Variable '" 
 			        + sequence + "' was not initialized.");
 	}
+	  private void statement() {
+		//statement -> compound_statement
+		
+		if(lookahead.token == Token.OPEN_BRACKET){
+			compound_statement();
+		}
+		//statement -> selection_statement
+		else if(lookahead.token == Token.IF){
+			selection_statement();
+		}
+		//statement -> iteration_statement
+		else if(lookahead.token == Token.WHILE){
+			iteration_statement();
+		}
+		//statement -> jump_statement
+		else if(lookahead.token == Token.CONTINUE || lookahead.token == Token.BREAK || lookahead.token == Token.RETURN){
+			jump_statement();
+		}
+		else if(lookahead.token == Token.PRINT){
+			print_statement();
+		}
+		else if(lookahead.token == Token.PRINTLN){
+			println_statement();
+		}
+		else if(lookahead.token == Token.SCAN){
+			scan_statement();
+		}
+		else if(lookahead.token == Token.CALL){
+			call_statement();
+		}
+		else{
+			expression_statement();
+		}
+	}
+	  private void call_statement() {
+		nextToken();
+		
+		for(Function x: functionCalls){
+			if(x.getName().equals(lookahead.sequence)){
+				nextToken();
+				nextToken();
+				nextToken();
+				nextToken();
+				for(Token y: x.getTokens()){
+					tokens.push(y);
+				}
+				compound_statement();
+			}
+		}
+		
+	}
+	  private void print_statement() {
+		nextToken();
+		Node es = new StringExpressionNode("");
+		if(lookahead.token == Token.OPEN_PAREN){
+			nextToken();
+			if(lookahead.token == Token.STDIN){
+				nextToken();
+			}else{
+				es = assignment_expression();
+			}
+			if(lookahead.token == Token.CLOSE_PAREN){
+				nextToken();
+				if(lookahead.token == Token.SEMI_COLON){
+					nextToken();
+				}
+			}
+		}
+		if(es.getType() == Node.STRING_NODE){
+			String esp = (String)es.getValue();
+			System.out.print(esp);
+		}
+		else{
+			System.out.print(es.getValue());
+		}
+	}
+	  private void println_statement() {
+			nextToken();
+			Node es = new StringExpressionNode("");
+			if(lookahead.token == Token.OPEN_PAREN){
+				nextToken();
+				if(lookahead.token == Token.STDIN){
+					nextToken();
+				}else{
+					es = assignment_expression();
+				}
+				if(lookahead.token == Token.CLOSE_PAREN){
+					nextToken();
+					if(lookahead.token == Token.SEMI_COLON){
+						nextToken();
+					}
+				}
+			}
+			if(es.getType() == Node.STRING_NODE){
+				String esp = (String)es.getValue();
+				System.out.println(esp);
+			}
+			else{
+				System.out.println(es.getValue());
+			}
+		}
+	  private void scan_statement(){
+		  nextToken();
+		  if(lookahead.token == Token.OPEN_PAREN){
+			  nextToken();
+			  if(lookahead.token == Token.IDENTIFIER){
+				  
+			  }else{
+				  //error
+			  }
+		  }else{
+			  //error
+		  }
+	  }
+	  private void jump_statement() {
+		if(lookahead.token == Token.CONTINUE){
+			nextToken();
+			
+			if(lookahead.token == Token.SEMI_COLON){
+				nextToken();
+			}else
+				throw new ParserException("(JUMP1)Unexpected symbol"+lookahead+" found");
+		}
+		else if(lookahead.token == Token.BREAK){
+			nextToken();
+			if(lookahead.token == Token.SEMI_COLON){
+				nextToken();
+			}else
+				throw new ParserException("(JUMP2)Unexpected symbol"+lookahead+" found");
+			
+		}
+		else if(lookahead.token == Token.RETURN){
+			nextToken();
+			if(lookahead.token != Token.SEMI_COLON){
+				assignment_expression();
+			}
+			if(lookahead.token == Token.SEMI_COLON)
+			nextToken();
+		}
+		else
+			throw new ParserException("(JUMP1)Unexpected symbol"+lookahead+" found");
 
-	private void expression_statement() {
+		
+	}
+	  private void compound_statement() {
+		nextToken();
+		if(lookahead.token == Token.CLOSE_BRACKET){
+			nextToken();
+		}
+		else{
+			block_item_list();
+			if(lookahead.token == Token.CLOSE_BRACKET){
+				nextToken();
+			}
+		}
+	}
+	  private void expression_statement() {
 		if(lookahead.token == Token.SEMI_COLON){
 			nextToken();
 		}
@@ -663,21 +706,42 @@ public class Parser {
 		else
 			throw new ParserException("(EXPRESSION_STATEMENT)Unexpected symbol "+lookahead.token+" found");
 	}
-	private void iteration_statement() {
-		
-		nextToken();
+	  private void iteration_statement() {
+		  LinkedList<Token> dummy = new LinkedList<Token>(tokens);
+		  nextToken();
 		if(lookahead.token == Token.OPEN_PAREN){
 			nextToken();
-			copy = new LinkedList<Token>(tokens);
 			Node cond = assignment_expression();
 			if(lookahead.token == Token.CLOSE_PAREN){
 				nextToken();
-				statement();
+				if((Boolean)cond.getValue()){
+					compound_statement();	
+					tokens.clear();
+					tokens = new LinkedList<Token>(dummy);
+					iteration_statement();
+				}else{
+					if(lookahead.token == Token.OPEN_BRACKET){
+						stack.push(lookahead.sequence);
+						nextToken();
+						while(!stack.isEmpty()){
+							 String see = lookahead.sequence;
+							 nextToken();
+							 if(see.equals("{")){
+								 stack.push("{");
+							 }
+							 else if(see.equals("}")){
+								stack.pop();
+							}
+						}
+					}else{
+					//error
+					}
+				}
 			}else
-				throw new ParserException("(ITER)Unexpected symbol"+lookahead+" found");
+				throw new ParserException("(ITER)Unexpected symbol"+lookahead.sequence+" found");
 		}
 		else
-			throw new ParserException("(ITER)Unexpected symbol"+lookahead+" found");
+			throw new ParserException("(ITER2)Unexpected symbol"+lookahead.sequence+" found");
 
 	}
 	  private void selection_statement() {

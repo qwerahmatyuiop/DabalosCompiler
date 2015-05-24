@@ -59,6 +59,7 @@ package LexicalAnalyzer;
 		 
 		
 		public static final int PRINT = 46;
+		public static final int PRINTLN = 461;
 		public static final int SCAN = 47;
 		public static final int FUNC = 48;
 

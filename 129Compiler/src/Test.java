@@ -65,14 +65,14 @@ public class Test {
 		  	tokenizer.add("=", 32);
 		  
 		    tokenizer.add("\\+", 380); //add and minus
-		    tokenizer.add("-", 381); //add and minus
+		    tokenizer.add("minus", 381); //add and minus
 		    tokenizer.add("\\*", 390); 
 		    tokenizer.add("/", 391); 
 		    tokenizer.add("%", 392); 
 		    
 		  	
 		  	 tokenizer.add("\".[^\"]*\"",45);
-		   
+		 	tokenizer.add("println", 46);
 		  	tokenizer.add("print", 46);
 		  	tokenizer.add("scan", 47);
 		  	tokenizer.add("func", 48);
