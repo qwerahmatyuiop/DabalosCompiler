@@ -14,6 +14,12 @@ public class IdentifierExpressionNode implements Node{
 		this.name = name;
 		valueSet = false;
 	}
+	public IdentifierExpressionNode(String name, Object value) {
+		super();
+		this.name = name;
+		value = this.value;
+		valueSet = true;
+	}
 
 	@Override
 	public int getType() {

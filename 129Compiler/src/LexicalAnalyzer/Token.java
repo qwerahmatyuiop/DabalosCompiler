@@ -14,6 +14,7 @@ package LexicalAnalyzer;
 		public static final int INT = 11;
 		public static final int BOOLEAN = 12;
 		public static final int FLOAT = 13;
+		public static final int FILE = 56;
 		
 		public static final int OPEN_BRACKET = 14;
 		public static final int CLOSE_BRACKET = 15;
@@ -66,12 +67,22 @@ package LexicalAnalyzer;
 		public static final int GLOBAL = 52;
 		public static final int STDIN = 49;
 		public static final int REVERSE = 54;
-		
+		public static final int CREATEFILE =55;
+		public static final int READFILE= 56;
 		public static final int INC_OP = 50;
 		public static final int DEC_OP = 51;
 		public static final int CALL = 53;
-		
-		
+		public static final int ARRAY_ADD= 57;
+		public static final int ARRAY_GET= 58;
+		public static final int ARRAY_REMOVE= 59;
+		public static final int ARRAY_SORT= 60;
+		public static final int ARRAY_DESCSORT = 61;
+		public static final int RANDOM = 62;
+		public static final int GET_SD = 63;
+		public static final int WRITE_FILE= 64;
+		public static final int READINTFILE =65;
+		public static final int WRITEINTFILE =66;
+		public static final int WRITEFILE =67;
 		public final int token;
 		public final String sequence;
 

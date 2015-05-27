@@ -1,14 +1,38 @@
-GLOBAL int rahmat = 9, r = 10;
 GLOBAL int a  = 0;
 GLOBAL int b = 0;
 GLOBAL int c  = 0;
+GLOBAL int d  = 0;
 GLOBAL int i  = 0;
-GLOBAL int n  = -5;
 GLOBAL int in = -24;
-GLOBAL boolean bool = false;
-GLOBAL String s1 = "rahar";
+GLOBAL int get1 = 0;
+GLOBAL int get2 = 0;
+GLOBAL sum = 0;
+GLOBAL mult = 0;
+GLOBAL String s1 = " ";
 GLOBAL String s2 = " ";
-func int fibo(){
+GLOBAL int array1[];
+GLOBAL int array2[];
+GLOBAL int array3[];
+GLOBAL int array4[];
+GLOBAL int sumarray[];
+GLOBAL int multarray[];
+GLOBAL float summationPos = 0.0;
+GLOBAL float summationNeg = 0.0;
+GLOBAL float averagePos = 0.0;
+GLOBAL float averageNeg = 0.0;
+GLOBAL float x =0;
+GLOBAL float xsum = 0;
+GLOBAL float y =0;
+GLOBAL float ysum = 0;
+GLOBAL float SDX = 0.1;
+GLOBAL float SDY = 0.1;
+
+
+func void HelloWorldprint(){
+	print("Hello World");
+}
+func void fibo(){
+	in = scan();
 	i=1;
     a=0;
     b=1;
@@ -22,7 +46,8 @@ func int fibo(){
     }
    
  }
-func int counto(){
+func void counto(){
+	in = scan();
 	if(in == 0){
 	print(0);
 	}
@@ -43,26 +68,128 @@ func int counto(){
 		}
 	}
 }
-func int palindrome(){
+func void palindrome(){
+	print("Input");
+	s1 = scan();
 	s2 = reverse(s1);
 	print(s2 == s1);
 }
-
-
-in = scan();
-call counto();
-call fibo();
-while(in != 9){
-	in = scan();
-	call counto();
-	call fibo();
+func void arrayManipulation(){
+	a = scan();
+	b = 0;
+	while(b < a){
+		c = scan();
+		Array.Add(array1, c);
+		Array.Add(array2, c);
+		b = b+1;
+	} 
+	array1 = Array.Sort(array1);
+	array2 = Array.DescSort(array2);
+	b = 0;
+	while(b < a){
+		get1 = Array.Get(array1, b);
+		get2 = Array.Get(array2, b);
+		sum = get1 + get2;
+		get1 = Array.Get(array1, b);
+		get2 = Array.Get(array2, b);
+		mult = get1 * get2;
+		Array.Add(sumarray, sum);
+		Array.Add(multarray, mult);
+		b = b+1;
+	}
+	b = 0;
+	while(b < a){
+		c = Array.Get(array1, b);
+		print(c);
+		print("	");
+		b = b+1;
+	}
+	println(" ");
+	b = 0;
+	while(b < a){
+		c = Array.Get(array2, b);
+		print(c);
+		print("	");
+		b = b+1;
+	}
+	b = 0;
+	println(" ");
+	while(b < a){
+		c = Array.Get(sumarray, b);
+		print(c);
+		print("	");
+		b = b+1;
+	}
+	println(" ");
+	b = 0;
+	while(b < a){
+		c = Array.Get(multarray, b);
+		print(c);
+		print("	");
+		b = b+1;
+	}
+	println(" ");
 }
-s1 = scan();
-call palindrome();
 
+func void r4nd0m(){
+	i = 0;
+	println(" ");
+	while(i < 50){
+		
+		c = rand(10000);
+		print(c);
+		print(" ,");
+		Array.Add(array3, c);
+		summationPos = summationPos + c;
+		d = c * -1;
+		Array.Add(array4, d);
+		summationNeg = summationNeg + d;
+		i = i+1;
+	}
+	println(" ");
+	print("Summation:");
+	println(summationPos);
+	print("Summation of Negative:");
+	println(summationNeg);
+	averagePos = summationPos / 50;
+	averageNeg = summationNeg / 50;
+	print("Average:");
+	println(averagePos);
+	print("Average of Negative:");
+	println(averageNeg);
+	i = 0;
+	
+	while( i < 50){
+		x = Array.Get(array3, i);
+		x = x minus averagePos;
+		x= x * x;
+		xsum = xsum + x;
+		
+		y = Array.Get(array4, i);
+		y = y minus averagePos;
+		y= y * y;
+		ysum = ysum + y;
+		i = i+1;
+	}
+	
+	print("Standard deviation of Positive: ");
+	SDX = getSD(xsum, 50.00); 
+	println(SDX);
+	print("Standard deviation of Negative: ");
+ 	SDY = getSD(ysum, 50.00);
+ 	println(SDY);
+	
+}
+func void readIntSortWrite(){
+s1 = "number.txt";
+array1 = readIntFile(s1,array1);
+array1 = Array.DescSort(array1);
+writeIntFile("number3.txt", array1);
+ }
  
-
-
-	 
-
-
+ func void Manualprinter(){
+ 	s1 = scan();
+ 	s2 = readFile("expressions.txt");
+ 	writeFile(s1, s2);
+ }
+call Manualprinter();

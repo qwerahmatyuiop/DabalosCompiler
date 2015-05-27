@@ -2,11 +2,12 @@ package Nodes;
 
 public interface Node {
 	public static final int IDENTIFIER_NODE = 0;
+	public static final int IDENTIFIER_ARRAY_NODE = 100;
 	public static final int INTEGER_NODE = 1;
 	public static final int STRING_NODE = 2;
 	public static final int FLOAT_NODE = 3;
 	public static final int BOOLEAN_NODE = 4;
-	
+	public static final int FILE_NODE = 41;
 	public static final int EXPRESSION_NODE = 5;
 	public static final int ASSIGNMENT_EXPRESSION_NODE = 6;
 	public static final int PRIMARY_EXPRESSION_NODE = 7;
