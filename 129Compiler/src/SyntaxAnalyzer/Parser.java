@@ -4,8 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -18,7 +16,6 @@ import Nodes.AdditiveExpressionNode;
 import Nodes.ArrayExpressionNode;
 import Nodes.BooleanExpressionNode;
 import Nodes.EqualityExpressionNode;
-import Nodes.FileExpressionNode;
 import Nodes.FloatExpressionNode;
 import Nodes.Function;
 import Nodes.IdentifierExpressionNode;
@@ -37,133 +34,125 @@ public class Parser {
 	LinkedList<IdentifierExpressionNode> symbols = new LinkedList<IdentifierExpressionNode>();
 	Stack<String> stack = new Stack<String>();
 	Token dum;
-	 Boolean execute = true;
+
 	public Parser() {
 	}
-	  public void parse(List<Token> tokens)
-	  {
-	    this.tokens = new LinkedList<Token>(tokens);
-	    lookahead = this.tokens.getFirst();
-	    
-	    entry_point();
-	    
-	    if (lookahead.token != Token.EPSILON)
-	      throw new ParserException("(PARSER)Unexpected symbol "+lookahead.token+" found");
-	  }
-	  private void entry_point(){
-		  while(lookahead.token != Token.EPSILON){
-		  if(lookahead.token == Token.FUNC || lookahead.token == Token.GLOBAL){
-		    	external_declaration();
-		    }else{
-		    	statement();
-		    	
-		    }
-		  }
-	  }
-	  private void external_declaration(){
-		  if(lookahead.token == Token.FUNC){
-			  function_definition();
-		  }
-		  else 
-			  declaration();
-	  }
-	  private void function_definition(){
-		  String name;
-		  nextToken();
-		  type_specifier();
-		  if(lookahead.token == Token.IDENTIFIER){
-			  name = lookahead.sequence;
-			  nextToken();
-			  if(lookahead.token == Token.OPEN_PAREN){
-				  nextToken();
-				  if(lookahead.token == Token.CLOSE_PAREN){
-					  nextToken();
-				  }
-				  else{
-					  parameters();
-					  if(lookahead.token == Token.CLOSE_PAREN){
-						  nextToken();
-					  }
-					  else{
-						  throw new ParserException("(function_definition)Unexpected symbol "+lookahead.token+" found");
-					  }
-				  }
-				  if(lookahead.token == Token.OPEN_BRACKET){
-					  Stack<String> s = new Stack<String>();
-					  s.push("{");
-					  funcStatements.add(lookahead);
-					  nextToken();
-					  while(!s.isEmpty()){
-						  funcStatements.add(lookahead);
-						  if(lookahead.sequence.equals("{")){
-							  s.push("{");
-						  }else if(lookahead.sequence.equals("}")){
-							  s.pop();
-						  }
-						  nextToken();
-					  }
-					  Function f = new Function(name, funcStatements);
-					  functionCalls.add(f);
-					  funcStatements.clear();
-				  }
-				  else{
-					  //error
-				  }
-			  }else{
-			      throw new ParserException("(PARSER)Unexpected symbol "+lookahead.token+" found");
-			  }
-		  }else 
-		      throw new ParserException("(PARSER)Unexpected symbol "+lookahead.token+" found");
-		  
-	  }
-	  private void parameters(){
-		 
-		while(lookahead.token != Token.CLOSE_PAREN){
-			 type_specifier();
-			 declarator();
-		 }
-	  }
-	  private String type_specifier(){
-		  String sequence = lookahead.sequence;
-		  if(lookahead.token == Token.VOID){
-			  nextToken();
-		  }
-		  else if(lookahead.token == Token.CHAR){
-			  nextToken();
-		  }
-		  else if(lookahead.token == Token.STRING){
-			  nextToken();
-		  }
-		  else if(lookahead.token == Token.INT){
-			  nextToken();
-		  }
-		  else if(lookahead.token == Token.BOOLEAN){
-			  nextToken();
-		  }
-		  else if(lookahead.token == Token.FLOAT){
-			  nextToken();
-		  }
-		  else if(lookahead.token == Token.FILE){
-			  nextToken();
-		  }
-		  return sequence;
-	  }
-	  private void block_item_list() {
-		block_item();
-		if(lookahead.token != Token.CLOSE_BRACKET)
-			block_item_list();
+	public void parse(List<Token> tokens)
+	{
+
+		this.tokens = new LinkedList<Token>(tokens); //list of tokens
+		lookahead = this.tokens.getFirst();
+
+		entry_point();
+
+		if (lookahead.token != Token.EPSILON)
+			throw new ParserException("(PARSER)Unexpected symbol "+lookahead.token+" found");
 	}
-	  private void block_item(){
-		if(lookahead.token >= Token.CHAR && lookahead.token <= Token.FLOAT || lookahead.token == Token.FILE){
-			declaration();
-		}else{
-			statement();
+	//entry_point -> entry_point external_declaration 
+	// 			|  entry_point statement
+	private void entry_point(){
+		while(lookahead.token != Token.EPSILON){
+			if(lookahead.token == Token.FUNC || lookahead.token == Token.GLOBAL){
+				external_declaration();
+			}else{
+				statement();
+
+			}
 		}
 	}
-	  private Node declaration(){
-		  nextToken();
-		 String dataType = "void";
-		if(lookahead.token >= Token.CHAR && lookahead.token <= Token.FLOAT || lookahead.token == Token.FILE){
+	//external_declaration -> "FUNC" function_definition
+	// 						| "GLOBAL" declaration
+	private void external_declaration(){
+		if(lookahead.token == Token.FUNC){
+			function_definition();
+		}
+		else 
+			declaration();
+	}
+	//function_definition -> 
+	private void function_definition(){
+		String name;
+		nextToken();
+		type_specifier();
+		if(lookahead.token == Token.IDENTIFIER){
+			name = lookahead.sequence;
+			nextToken();
+			if(lookahead.token == Token.OPEN_PAREN){
+				nextToken();
+				if(lookahead.token == Token.CLOSE_PAREN){
+					nextToken();
+				}
+				else{
+					parameters();
+					if(lookahead.token == Token.CLOSE_PAREN){
+						nextToken();
+					}
+					else{
+						throw new ParserException("(function_definition)Unexpected symbol "+lookahead.token+" found");
+					}
+				}
+				if(lookahead.token == Token.OPEN_BRACKET){
+					Stack<String> s = new Stack<String>();
+					s.push("{");
+					funcStatements.add(lookahead);
+					nextToken();
+					while(!s.isEmpty()){
+						funcStatements.add(lookahead);
+						if(lookahead.sequence.equals("{")){
+							s.push("{");
+						}else if(lookahead.sequence.equals("}")){
+							s.pop();
+						}
+						nextToken();
+					}
+					Function f = new Function(name, funcStatements);
+					functionCalls.add(f);
+					funcStatements.clear();
+				}
+				else{
+					throw new ParserException("(PARSER)Unexpected symbol "+lookahead.sequence +" found");
+				}
+			}else{
+				throw new ParserException("(PARSER)Unexpected symbol "+lookahead.sequence +" found");
+			}
+		}else 
+			throw new ParserException("(PARSER)Unexpected symbol "+lookahead.sequence +" found");
+
+	}
+	private void parameters(){
+
+		while(lookahead.token != Token.CLOSE_PAREN){
+			type_specifier();
+			declarator();
+		}
+	}
+	private String type_specifier(){
+		String sequence = lookahead.sequence;
+		if(lookahead.token == Token.VOID){
+			nextToken();
+		}
+		else if(lookahead.token == Token.CHAR){
+			nextToken();
+		}
+		else if(lookahead.token == Token.STRING){
+			nextToken();
+		}
+		else if(lookahead.token == Token.INT){
+			nextToken();
+		}
+		else if(lookahead.token == Token.BOOLEAN){
+			nextToken();
+		}
+		else if(lookahead.token == Token.FLOAT){
+			nextToken();
+		}
+		return sequence;
+	}
+
+	private Node declaration(){
+		nextToken();
+		String dataType = "void";
+		if(lookahead.token >= Token.CHAR && lookahead.token <= Token.FLOAT){
 			dataType = type_specifier();
 		}
 		Node es = init_declarator_list(dataType);
@@ -174,7 +163,7 @@ public class Parser {
 		else
 			throw new ParserException("(DECLARATION)Unexpected symbol "+lookahead.token+" found");
 	}
-	  private Node init_declarator_list(String dataType){
+	private Node init_declarator_list(String dataType){
 		Node es = init_declarator(dataType);
 		if(lookahead.token == Token.COMMA){
 			nextToken();
@@ -182,7 +171,7 @@ public class Parser {
 		}
 		return es;
 	}
-	  private Node init_declarator(String dataType){
+	private Node init_declarator(String dataType){
 		IdentifierExpressionNode newVariable  =(IdentifierExpressionNode)declarator();
 		if(lookahead.token == Token.ASSIGN){
 			nextToken();
@@ -199,9 +188,9 @@ public class Parser {
 			symbols.add(newVariable);
 			return newVariable;
 		}
-	
+
 	}
-	  private Node declarator(){
+	private Node declarator(){
 		/*if(lookahead.token == Token.OPEN_PAREN){
 			declarator();
 			if(lookahead.token == Token.CLOSE_PAREN){
@@ -214,7 +203,7 @@ public class Parser {
 			nextToken();
 			if(lookahead.token != Token.CLOSE_BRACE)
 				assignment_expression();
-	
+
 			if(lookahead.token == Token.CLOSE_BRACE){
 				nextToken();
 			}
@@ -228,7 +217,7 @@ public class Parser {
 			Node Name;
 			if(lookahead.token == Token.OPEN_BRACE){
 				nextToken();
-				 Name = new ArrayExpressionNode(name);
+				Name = new ArrayExpressionNode(name);
 				nextToken();
 			}else{
 				Name = new IdentifierExpressionNode(name);
@@ -236,78 +225,81 @@ public class Parser {
 			return Name;
 		}
 		return null;
-		
+
 	}
-	  private Node assignment_expression(){
+	private Node assignment_expression(){
 		Node ae = null;
-		  if(lookahead.token == Token.REVERSE){
-			  ae = reverse_expression();
-		  }
-		  else if(lookahead.token == Token.SCAN){
-			  ae = scan_expression();
-		  }
-		  else if(lookahead.token == Token.READFILE){
-			  ae = readFile_expression();
-		  }else if(lookahead.token == Token.ARRAY_GET || lookahead.token == Token.ARRAY_REMOVE || lookahead.token == Token.ARRAY_DESCSORT || lookahead.token == Token.ARRAY_SORT){
-			  ae = arrayFunctions();
-		  }else if(lookahead.token == Token.RANDOM){
-			  ae = random_expression();
-		  }else if (lookahead.token == Token.GET_SD){
+		if(lookahead.token == Token.REVERSE){
+			ae = reverse_expression();
+		}
+		else if(lookahead.token == Token.SCAN){
+			ae = scan_expression();
+		}
+		else if(lookahead.token == Token.READFILE){
+			ae = readFile_expression();
+		}
+		else if(lookahead.token == Token.ARRAY_GET || lookahead.token == Token.ARRAY_REMOVE || lookahead.token == Token.ARRAY_DESCSORT || lookahead.token == Token.ARRAY_SORT){
+			ae = arrayFunctions();
+		}
+		else if(lookahead.token == Token.RANDOM){
+			ae = random_expression();
+		}
+		else if (lookahead.token == Token.GET_SD){
+			ae = SD_expression();
+		}
+		else if(lookahead.token == Token.READINTFILE){
+			ae = readIntFile_expression();
+		}
+		else{
+			ae = logical_or_expression();
+			if(ae.getType() == Node.IDENTIFIER_NODE || ae.getType() == Node.IDENTIFIER_ARRAY_NODE){
+				if(lookahead.token == Token.ASSIGN){
+					ae = assignment_operator(ae);
+				}
+			}
 
-			  ae = SD_expression();
-		  }else if(lookahead.token == Token.READINTFILE){
-			  ae = readIntFile_expression();
-		  }  else{
-			  ae = logical_or_expression();
-			  if(ae.getType() == Node.IDENTIFIER_NODE || ae.getType() == Node.IDENTIFIER_ARRAY_NODE){
-				  if(lookahead.token == Token.ASSIGN){
-					  ae = assignment_operator(ae);
-
-				  }
-			  }
-			 
-		  }
+		}
 		return ae;
 	}
-	  private Node SD_expression() {
-			nextToken();
-			float value;
-				if(lookahead.token == Token.OPEN_PAREN){
-					nextToken();
-					int x1 = (Integer)primary_expression().getValue();
-					nextToken();
-					float x2 = (Float)primary_expression().getValue();
-					value =(float) x1 / x2;
-					value = (float) Math.sqrt(value);
-					if(lookahead.token == Token.CLOSE_PAREN){
-						nextToken();
-						Node ret = new FloatExpressionNode(value);
-						return ret;
-					}
-				}else{
-					throw new ParserException(" ");
-				}
-			return null;
-		}
-	  private Node random_expression() {
+	private Node SD_expression() {
 		nextToken();
-		int value;
-			if(lookahead.token == Token.OPEN_PAREN){
+		float value;
+		if(lookahead.token == Token.OPEN_PAREN){
+			nextToken();
+			int x1 = (Integer)primary_expression().getValue();
+			nextToken();
+			float x2 = (Float)primary_expression().getValue();
+			value =(float) x1 / x2;
+			value = (float) Math.sqrt(value);
+			if(lookahead.token == Token.CLOSE_PAREN){
 				nextToken();
-				Random random = new Random();
-				int n = Integer.parseInt(lookahead.sequence);
-				value = (random.nextInt(n*2)-n);
-				nextToken();
-				if(lookahead.token == Token.CLOSE_PAREN){
-					nextToken();
-					return new IntegerExpressionNode(value);
-				}
-			}else{
-				throw new ParserException(" ");
+				Node ret = new FloatExpressionNode(value);
+				return ret;
 			}
+		}else{
+			throw new ParserException(" ");
+		}
 		return null;
 	}
-	  private Node arrayFunctions() {
+	private Node random_expression() {
+		nextToken();
+		int value;
+		if(lookahead.token == Token.OPEN_PAREN){
+			nextToken();
+			Random random = new Random();
+			int n = Integer.parseInt(lookahead.sequence);
+			value = (random.nextInt(n*2)-n);
+			nextToken();
+			if(lookahead.token == Token.CLOSE_PAREN){
+				nextToken();
+				return new IntegerExpressionNode(value);
+			}
+		}else{
+			throw new ParserException(" ");
+		}
+		return null;
+	}
+	private Node arrayFunctions() {
 		if(lookahead.token == Token.ARRAY_GET){
 			nextToken();
 			if(lookahead.token == Token.OPEN_PAREN){
@@ -330,7 +322,7 @@ public class Parser {
 			}
 		}
 		else if(lookahead.token == Token.ARRAY_REMOVE){
-			
+
 			nextToken();
 			if(lookahead.token == Token.OPEN_PAREN){
 				nextToken();
@@ -338,7 +330,7 @@ public class Parser {
 				nextToken();
 				nextToken();
 				int value = aen.delete((Integer)primary_expression().getValue());
-			
+
 				if(lookahead.token == Token.CLOSE_PAREN){
 					nextToken();	
 					Node es = new IntegerExpressionNode(value);
@@ -351,7 +343,7 @@ public class Parser {
 				//error
 				throw new ParserException(" ");
 			}
-		
+
 		}
 		else if(lookahead.token == Token.ARRAY_SORT || lookahead.token == Token.ARRAY_DESCSORT){
 			boolean sort = (lookahead.token  == Token.ARRAY_SORT)? true: false;
@@ -364,7 +356,7 @@ public class Parser {
 					aen.setValue(aen.sort());
 				else
 					aen.setValue(aen.sortdesc());
-				
+
 				if(lookahead.token == Token.CLOSE_PAREN){
 					nextToken();
 					return aen;
@@ -380,83 +372,82 @@ public class Parser {
 			}
 		}
 		else{
-			
+
 			throw new ParserException(" ");
 		}
 	}
-	  private Node readFile_expression() {
-		  String temp = "";
-		  File file;
-		  nextToken();
-			//for(Token s: tokens) System.out.println(s.sequence);
-		  if(lookahead.token == Token.OPEN_PAREN){
-			  nextToken();
-				Node ae = primary_expression();
-				String s = (String) ae.getValue();
-				s = s.replaceAll("\"", "");
-				
-					try {
-						Scanner scan = new Scanner(new FileReader(s));
-			
-						while(scan.hasNextLine()){
-							temp += scan.nextLine()+ "\n";
-						}
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}		 
-			  if(lookahead.token == Token.CLOSE_PAREN){
-					nextToken();
+	private Node readFile_expression() {
+		String temp = "";
+		File file;
+		nextToken();
+		if(lookahead.token == Token.OPEN_PAREN){
+			nextToken();
+			Node ae = primary_expression();
+			String s = (String) ae.getValue();
+			s = s.replaceAll("\"", "");
+
+			try {
+				Scanner scan = new Scanner(new FileReader(s));
+
+				while(scan.hasNextLine()){
+					temp += scan.nextLine()+ "\n";
 				}
-			  return new StringExpressionNode(temp);
-		  }else{
-			  throw new ParserException(" ");
-		  }
-	}
-	  private Node readIntFile_expression() {
-		  String temp = "";
-		  File file;
-		  nextToken();
-			//for(Token s: tokens) System.out.println(s.sequence);
-		  
-		  if(lookahead.token == Token.OPEN_PAREN){
-			  nextToken();
-				Node ae = primary_expression();
-				String s = (String) ae.getValue();
-				s = s.replaceAll("\"", "");
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		 
+			if(lookahead.token == Token.CLOSE_PAREN){
 				nextToken();
-				ArrayExpressionNode aen = (ArrayExpressionNode) findSymbol(lookahead.sequence);
-				nextToken();
-				try {
-						Scanner scan = new Scanner(new FileReader(s));
-			
-						while(scan.hasNextInt()){
-							aen.add(scan.nextInt());
-						}
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}		 
-			  if(lookahead.token == Token.CLOSE_PAREN){
-					nextToken();
-				}
-			  return aen;
-		  }else{
-			  throw new ParserException(" ");
-		  }
-	}
-	  private Node assignment_operator(Node ae){
-		  IdentifierExpressionNode ass = (IdentifierExpressionNode)ae;
-			if(lookahead.token == Token.ASSIGN){
-				nextToken();
-				ass.setValue(assignment_expression().getValue());
-				symbols.remove(findSymbol(ass.getName()));
-				symbols.add(ass);
-				
 			}
-			return ass;
+			return new StringExpressionNode(temp);
+		}else{
+			throw new ParserException(" ");
+		}
 	}
-	  private Node logical_or_expression() {
+	private Node readIntFile_expression() {
+		String temp = "";
+		File file;
+		nextToken();
+		//for(Token s: tokens) System.out.println(s.sequence);
+
+		if(lookahead.token == Token.OPEN_PAREN){
+			nextToken();
+			Node ae = primary_expression();
+			String s = (String) ae.getValue();
+			s = s.replaceAll("\"", "");
+			nextToken();
+			ArrayExpressionNode aen = (ArrayExpressionNode) findSymbol(lookahead.sequence);
+			nextToken();
+			try {
+				Scanner scan = new Scanner(new FileReader(s));
+
+				while(scan.hasNextInt()){
+					aen.add(scan.nextInt());
+				}
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		 
+			if(lookahead.token == Token.CLOSE_PAREN){
+				nextToken();
+			}
+			return aen;
+		}else{
+			throw new ParserException(" ");
+		}
+	}
+	private Node assignment_operator(Node ae){
+		IdentifierExpressionNode ass = (IdentifierExpressionNode)ae;
+		if(lookahead.token == Token.ASSIGN){
+			nextToken();
+			ass.setValue(assignment_expression().getValue());
+			symbols.remove(findSymbol(ass.getName()));
+			symbols.add(ass);
+
+		}
+		return ass;
+	}
+	private Node logical_or_expression() {
 		boolean test;
 		Node s1  = logical_and_expression();
 		if(s1.getType() != Node.BOOLEAN_NODE){
@@ -477,21 +468,21 @@ public class Parser {
 		}
 		Node ret = new BooleanExpressionNode(test);
 		return ret;
-		
+
 	}
-	  private Node logical_and_expression() {
+	private Node logical_and_expression() {
 		boolean test;
 		Node s1 = equality_expression();
-		
+
 		if(s1.getType() != Node.BOOLEAN_NODE){
 			return s1;
 		}else{
-			 test = (Boolean)s1.getValue();
+			test = (Boolean)s1.getValue();
 			while(lookahead.token == Token.AND_OP){
 				nextToken();
 				Node s2 = equality_expression();
 				if(s2.getType() != Node.BOOLEAN_NODE){
-					 throw new ParserException("Unexpected symbol "+lookahead.sequence+" found"); 
+					throw new ParserException("Unexpected symbol "+lookahead.sequence+" found"); 
 				}else{
 					s1 = new BooleanExpressionNode(test);
 					LogicalAndExpressionNode lae = new LogicalAndExpressionNode(Token.AND_OP,s1 , s2);
@@ -501,14 +492,14 @@ public class Parser {
 		}
 		Node ret = new BooleanExpressionNode(test);
 		return ret;
-		
+
 	}
-	  private Node equality_expression(){
-		  
+	private Node equality_expression(){
+
 		Node eq1 = additive_expression();
 		boolean test = true;
 		boolean changed = false;
-		
+
 		if(lookahead.token == Token.EQ_OP || lookahead.token == Token.NEG_OP || lookahead.token == Token.GR || lookahead.token == Token.LE || lookahead.token == Token.GR_EQ || lookahead.token == Token.LE_EQ){
 			changed = true;
 			int operator = lookahead.token;
@@ -525,18 +516,18 @@ public class Parser {
 			return eq1;
 		}
 	}
-	  private Node additive_expression(){
+	private Node additive_expression(){
 		double temp = 0.0;
 		double temp2 = 0.0;
-		
+
 		Node addE = multiplicative_expression();
 		if( lookahead.token == Token.PLUS || lookahead.token == Token.MINUS){
 			if(addE.getValue() instanceof Integer){
 				int s = (Integer) addE.getValue();
-				 temp = (double) s;
+				temp = (double) s;
 			}else{
 				float s = (Float) addE.getValue();
-				 temp = (double) s;
+				temp = (double) s;
 			}
 			while( lookahead.token == Token.PLUS || lookahead.token == Token.MINUS){
 				int	x = lookahead.token;
@@ -544,10 +535,10 @@ public class Parser {
 				Node mult2 = postfix_expression();
 				if(mult2.getValue() instanceof Integer){
 					int s = (Integer) mult2.getValue();
-					 temp2 = (double) s;
+					temp2 = (double) s;
 				}else{
 					float s = (Float) mult2.getValue();
-					 temp2 = (double) s;
+					temp2 = (double) s;
 				}
 				AdditiveExpressionNode mulOper = new AdditiveExpressionNode(x,temp,temp2);
 				temp = mulOper.getValue();
@@ -561,17 +552,17 @@ public class Parser {
 			return addE;
 		}
 	}
-	  private Node multiplicative_expression(){
+	private Node multiplicative_expression(){
 		double temp = 0.0;
 		double temp2 = 0.0;
 		Node mult = postfix_expression();
 		if( lookahead.token == Token.MOD || lookahead.token == Token.DIV || lookahead.token == Token.MULT){
 			if(mult.getValue() instanceof Integer){
 				int s = (Integer) mult.getValue();
-				 temp = (double) s;
+				temp = (double) s;
 			}else{
 				float s = (Float) mult.getValue();
-				 temp = (double) s;
+				temp = (double) s;
 			}
 			while( lookahead.token == Token.MOD || lookahead.token == Token.DIV || lookahead.token == Token.MULT){
 				int	x = lookahead.token;
@@ -579,10 +570,10 @@ public class Parser {
 				Node mult2 = postfix_expression();
 				if(mult2.getValue() instanceof Integer){
 					int s = (Integer) mult2.getValue();
-					 temp2 = (double) s;
+					temp2 = (double) s;
 				}else{
 					float s = (Float) mult2.getValue();
-					 temp2 = (double) s;
+					temp2 = (double) s;
 				}
 				MultiplicativeExpressionNode mulOper = new MultiplicativeExpressionNode(x,temp,temp2);
 				temp = mulOper.getValue();
@@ -595,8 +586,8 @@ public class Parser {
 		}else{
 			return mult;
 		}
-	  }
-	  private Node postfix_expression() {
+	}
+	private Node postfix_expression() {
 		Node primExpr = primary_expression();
 		if(primExpr.getType() == Node.IDENTIFIER_NODE){
 			if (lookahead.token == Token.INC_OP || lookahead.token == Token.DEC_OP){
@@ -622,7 +613,7 @@ public class Parser {
 			return primExpr;
 		}
 	}
-	  private Node primary_expression() {
+	private Node primary_expression() {
 		if(lookahead.token == Token.IDENTIFIER){
 			Node expr = findSymbol(lookahead.sequence);
 			nextToken();
@@ -647,53 +638,80 @@ public class Parser {
 			return expr;
 		}
 		if(lookahead.token == Token.EPSILON){
-			 throw new ParserException("Unexpected end of input");
+			throw new ParserException("Unexpected end of input");
 		}else{
-			    throw new ParserException("Unexpected symbol "+lookahead.sequence +" found");
+			throw new ParserException("Unexpected symbol "+lookahead.sequence +" found");
 		}
 	}
-	  private Node reverse_expression() {
-		  nextToken();
-		  String rev = "";
-		  String temp = "";
-		  Node es = new StringExpressionNode(rev);
-		  if(lookahead.token == Token.OPEN_PAREN){
-			  nextToken();
-			  if(lookahead.token == Token.IDENTIFIER){
-				 Node ss = primary_expression();
-				 temp = ss.getValue().toString();
-			  }else if (lookahead.token == Token.STRING){
-				  temp = lookahead.sequence;
-				  nextToken();
-			  }else{
+	private Node reverse_expression() {
+		nextToken();
+		String rev = "";
+		String temp = "";
+		Node es = new StringExpressionNode(rev);
+		if(lookahead.token == Token.OPEN_PAREN){
+			nextToken();
+			if(lookahead.token == Token.IDENTIFIER){
+				Node ss = primary_expression();
+				temp = ss.getValue().toString();
+			}else if (lookahead.token == Token.STRING){
+				temp = lookahead.sequence;
+				nextToken();
+			}else{
 				//error
-			  }
-				for( int i = temp.length()-1 ; i >= 0; i--){
-					rev += temp.charAt(i);
-				}
-			  es = new StringExpressionNode(rev);
-		  
-			  if(lookahead.token == Token.CLOSE_PAREN){
-					nextToken();
-				}
-		  }else{
-			  //error
-		  }
+			}
+			for( int i = temp.length()-1 ; i >= 0; i--){
+				rev += temp.charAt(i);
+			}
+			es = new StringExpressionNode(rev);
+
+			if(lookahead.token == Token.CLOSE_PAREN){
+				nextToken();
+			}
+		}else{
+			//error
+		}
 		return es;
-	  }
-	  private IdentifierExpressionNode findSymbol(String sequence) {
-		  for(IdentifierExpressionNode n: symbols){
-			  if(n.getName().equals(sequence)){
-				  return n;
-			  }
-		  }
-		  
-		  throw new EvaluationException("Variable '" 
-			        + sequence + "' was not initialized.");
 	}
-	  private void statement() {
+	private Node scan_expression(){
+		nextToken();
+		if(lookahead.token == Token.OPEN_PAREN){
+			nextToken();
+			if(lookahead.token == Token.CLOSE_PAREN){
+				nextToken();
+			}
+			else{
+				//error
+			}
+		}else{
+			//error
+		}
+		Scanner scan = new Scanner(System.in);
+		String trys = scan.nextLine();
+		if(trys.matches("(-)?[0-9]+\\.[0-9]+")){
+			return new FloatExpressionNode(trys);
+		}else if(trys.matches("(-)?[0-9]+")){
+			return new IntegerExpressionNode(trys);
+
+		}
+		else if(trys.matches("\".[^\"]*\"")){
+			return new StringExpressionNode(trys);
+		}
+		else 
+			throw new ParserException("Invalid Input");
+	}
+	private IdentifierExpressionNode findSymbol(String sequence) {
+		for(IdentifierExpressionNode n: symbols){
+			if(n.getName().equals(sequence)){
+				return n;
+			}
+		}
+
+		throw new EvaluationException("Variable '" 
+				+ sequence + "' was not initialized.");
+	}
+	private void statement() {
 		//statement -> compound_statement
-		
+
 		if(lookahead.token == Token.OPEN_BRACKET){
 			compound_statement();
 		}
@@ -706,9 +724,6 @@ public class Parser {
 			iteration_statement();
 		}
 		//statement -> jump_statement
-		else if(lookahead.token == Token.CONTINUE || lookahead.token == Token.BREAK || lookahead.token == Token.RETURN){
-			jump_statement();
-		}
 		else if(lookahead.token == Token.PRINT){
 			print_statement();
 		}
@@ -732,84 +747,84 @@ public class Parser {
 
 		}
 	}
-	  private void writeIntFile_statement() {
-		  nextToken();
-			if(lookahead.token == Token.OPEN_PAREN){
-				nextToken();
-				Node ae = primary_expression();
-				String s = (String) ae.getValue();
-				s = s.replaceAll("\"", "");
-				nextToken();
-				ArrayExpressionNode aen = (ArrayExpressionNode)findSymbol(lookahead.sequence);
-				nextToken();
-				LinkedList<Integer> nums = new LinkedList<Integer>(aen.getValue());
-				
-				try {
-					File f = new File(s);
-					if(!f.exists()) {
-					    try {
-							f.createNewFile();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					} 
-					PrintWriter printer = new PrintWriter(f);
-					for(int sx: nums){
-						if(sx == nums.getLast())
-							printer.print(sx);
-						else
+	private void writeIntFile_statement() {
+		nextToken();
+		if(lookahead.token == Token.OPEN_PAREN){
+			nextToken();
+			Node ae = primary_expression();
+			String s = (String) ae.getValue();
+			s = s.replaceAll("\"", "");
+			nextToken();
+			ArrayExpressionNode aen = (ArrayExpressionNode)findSymbol(lookahead.sequence);
+			nextToken();
+			LinkedList<Integer> nums = new LinkedList<Integer>(aen.getValue());
+
+			try {
+				File f = new File(s);
+				if(!f.exists()) {
+					try {
+						f.createNewFile();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} 
+				PrintWriter printer = new PrintWriter(f);
+				for(int sx: nums){
+					if(sx == nums.getLast())
+						printer.print(sx);
+					else
 						printer.println(sx);
-					}
-					printer.close();
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
-				  if(lookahead.token == Token.CLOSE_PAREN){
-						nextToken();
-						if(lookahead.token == Token.SEMI_COLON)
-							nextToken();
-					}
+				printer.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		
-	}
-	  private void writeFile_statement() {
-		  nextToken();
-			if(lookahead.token == Token.OPEN_PAREN){
+			if(lookahead.token == Token.CLOSE_PAREN){
 				nextToken();
-				Node ae = primary_expression();
-				String s = (String) ae.getValue();
-				s = s.replaceAll("\"", "");
-				nextToken();
-				IdentifierExpressionNode ien =(IdentifierExpressionNode) findSymbol(lookahead.sequence);
-				nextToken();
-				try {
-					File f = new File(s);
-					if(!f.exists()) {
-					    try {
-							f.createNewFile();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					} 
-					PrintWriter printer = new PrintWriter(f);
-					printer.print(((String) ien.getValue()).replaceAll("\"", ""));
-					printer.close();
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				  if(lookahead.token == Token.CLOSE_PAREN){
-						nextToken();
-						if(lookahead.token == Token.SEMI_COLON)
-							nextToken();
-					}
+				if(lookahead.token == Token.SEMI_COLON)
+					nextToken();
 			}
-		
+		}
+
 	}
-	  private void arrayAdd_statement() {
+	private void writeFile_statement() {
+		nextToken();
+		if(lookahead.token == Token.OPEN_PAREN){
+			nextToken();
+			Node ae = primary_expression();
+			String s = (String) ae.getValue();
+			s = s.replaceAll("\"", "");
+			nextToken();
+			IdentifierExpressionNode ien =(IdentifierExpressionNode) findSymbol(lookahead.sequence);
+			nextToken();
+			try {
+				File f = new File(s);
+				if(!f.exists()) {
+					try {
+						f.createNewFile();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} 
+				PrintWriter printer = new PrintWriter(f);
+				printer.print(((String) ien.getValue()).replaceAll("\"", ""));
+				printer.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(lookahead.token == Token.CLOSE_PAREN){
+				nextToken();
+				if(lookahead.token == Token.SEMI_COLON)
+					nextToken();
+			}
+		}
+
+	}
+	private void arrayAdd_statement() {
 		nextToken();
 		if(lookahead.token == Token.OPEN_PAREN){
 			nextToken();
@@ -824,13 +839,21 @@ public class Parser {
 					if(lookahead.token == Token.SEMI_COLON){
 						nextToken();
 					}
+					else{
+						throw new ParserException("Unexpected symbol "+lookahead.sequence+" found");
+					}
+				}else{
+					throw new ParserException("Unexpected symbol "+lookahead.sequence+" found");
 				}
 			}
+			else{
+				throw new ParserException("Unexpected symbol "+lookahead.sequence+" found");
+			}
 		}else{
-			//error
+			throw new ParserException("Unexpected symbol "+lookahead.sequence+" found");
 		}
 	}
-	  private void call_statement() {
+	private void call_statement() {
 		nextToken();
 		for(Function x: functionCalls){
 			if(x.getName().equals(lookahead.sequence)){
@@ -845,7 +868,7 @@ public class Parser {
 			}
 		}
 	}
-	  private void print_statement() {
+	private void print_statement() {
 		nextToken();
 		Node es = new StringExpressionNode("");
 		if(lookahead.token == Token.OPEN_PAREN){
@@ -864,110 +887,54 @@ public class Parser {
 		}
 		if(es.getType() == Node.STRING_NODE){
 			String printer = "";
-			String esp = (String)es.getValue();
+			String esp = es.getValue().toString();
 			for(char s: esp.toCharArray()){
 				if(s != '"'){
 					printer += s;
 				}
 			}
-			
+
 			System.out.print(printer);
 		}
 		else{
 			System.out.print(es.getValue().toString());
 		}
 	}
-	  private void println_statement() {
+	private void println_statement() {
+		nextToken();
+		Node es = new StringExpressionNode("");
+		if(lookahead.token == Token.OPEN_PAREN){
 			nextToken();
-			Node es = new StringExpressionNode("");
-			if(lookahead.token == Token.OPEN_PAREN){
+			if(lookahead.token == Token.STDIN){
 				nextToken();
-				if(lookahead.token == Token.STDIN){
-					nextToken();
-				}else{
-					es = assignment_expression();
-				
-				}
-				if(lookahead.token == Token.CLOSE_PAREN){
-					nextToken();
-					if(lookahead.token == Token.SEMI_COLON){
-						nextToken();
-					}
-				}
-			}
-			if(es.getType() == Node.STRING_NODE){
-				String printer = "";
-				String esp = (String)es.getValue();
-				for(char s: esp.toCharArray()){
-					if(s != '"'){
-						printer += s;
-					}
-				}
-				
-				System.out.println(printer);
-			}
-			else{
-				System.out.println(es.getValue());
-			}
-		}
-	  private Node scan_expression(){
-		  nextToken();
-		  if(lookahead.token == Token.OPEN_PAREN){
-			  nextToken();
-			  if(lookahead.token == Token.CLOSE_PAREN){
-				  nextToken();
-			  }
-			  else{
-				  //error
-			  }
-		  }else{
-			  //error
-		  }
-		  Scanner scan = new Scanner(System.in);
-		  String trys = scan.nextLine();
-		  if(trys.matches("(-)?[0-9]+\\.[0-9]+")){
-			  return new FloatExpressionNode(trys);
-		  }else if(trys.matches("(-)?[0-9]+")){
-			  return new IntegerExpressionNode(trys);
-			  
-		  }
-		  else if(trys.matches("\".[^\"]*\"")){
-			  return new StringExpressionNode(trys);
-		  }
-		  else 
-			  throw new ParserException("Invalid Input");
-	  }
-	  private void jump_statement() {
-		if(lookahead.token == Token.CONTINUE){
-			nextToken();
-			
-			if(lookahead.token == Token.SEMI_COLON){
-				nextToken();
-			}else
-				throw new ParserException("(JUMP1)Unexpected symbol"+lookahead+" found");
-		}
-		else if(lookahead.token == Token.BREAK){
-			nextToken();
-			if(lookahead.token == Token.SEMI_COLON){
-				nextToken();
-			}else
-				throw new ParserException("(JUMP2)Unexpected symbol"+lookahead+" found");
-			
-		}
-		else if(lookahead.token == Token.RETURN){
-			nextToken();
-			if(lookahead.token != Token.SEMI_COLON){
-				assignment_expression();
-			}
-			if(lookahead.token == Token.SEMI_COLON)
-			nextToken();
-		}
-		else
-			throw new ParserException("(JUMP1)Unexpected symbol"+lookahead+" found");
+			}else{
+				es = assignment_expression();
 
-		
+			}
+			if(lookahead.token == Token.CLOSE_PAREN){
+				nextToken();
+				if(lookahead.token == Token.SEMI_COLON){
+					nextToken();
+				}
+			}
+		}
+		if(es.getType() == Node.STRING_NODE){
+			String printer = "";
+			String esp = es.getValue().toString();
+			for(char s: esp.toCharArray()){
+				if(s != '"'){
+					printer += s;
+				}
+			}
+
+			System.out.println(printer);
+		}
+		else{
+			System.out.println(es.getValue().toString());
+		}
 	}
-	  private void compound_statement() {
+
+	private void compound_statement() {
 		nextToken();
 		if(lookahead.token == Token.CLOSE_BRACKET){
 			nextToken();
@@ -979,12 +946,24 @@ public class Parser {
 			}
 		}
 	}
-	  private void expression_statement() {
+	private void block_item_list() {
+		block_item();
+		if(lookahead.token != Token.CLOSE_BRACKET)
+			block_item_list();
+	}
+	private void block_item(){
+		if(lookahead.token >= Token.CHAR && lookahead.token <= Token.FLOAT ){
+			declaration();
+		}else{
+			statement();
+		}
+	}
+	private void expression_statement() {
 		if(lookahead.token == Token.SEMI_COLON){
 			nextToken();
 		}
 		else{
-		Node es = assignment_expression();
+			Node es = assignment_expression();
 		}
 		if(lookahead.token == Token.SEMI_COLON){
 			nextToken();
@@ -992,9 +971,9 @@ public class Parser {
 		else
 			throw new ParserException("(EXPRESSION_STATEMENT)Unexpected symbol "+lookahead.token+" found");
 	}
-	  private void iteration_statement() {
-		  LinkedList<Token> dummy = new LinkedList<Token>(tokens);
-		  nextToken();
+	private void iteration_statement() {
+		LinkedList<Token> dummy = new LinkedList<Token>(tokens);
+		nextToken();
 		if(lookahead.token == Token.OPEN_PAREN){
 			nextToken();
 			Node cond = assignment_expression();
@@ -1010,17 +989,17 @@ public class Parser {
 						stack.push(lookahead.sequence);
 						nextToken();
 						while(!stack.isEmpty()){
-							 String see = lookahead.sequence;
-							 nextToken();
-							 if(see.equals("{")){
-								 stack.push("{");
-							 }
-							 else if(see.equals("}")){
+							String see = lookahead.sequence;
+							nextToken();
+							if(see.equals("{")){
+								stack.push("{");
+							}
+							else if(see.equals("}")){
 								stack.pop();
 							}
 						}
 					}else{
-					//error
+						//error
 					}
 				}
 			}else
@@ -1030,7 +1009,7 @@ public class Parser {
 			throw new ParserException("(ITER2)Unexpected symbol"+lookahead.sequence+" found");
 
 	}
-	  private void selection_statement() {
+	private void selection_statement() {
 		stack.clear();
 		nextToken();
 		Boolean select = false;
@@ -1059,7 +1038,7 @@ public class Parser {
 						}
 					}
 				}
-			if(lookahead.token == Token.ELSE){
+				if(lookahead.token == Token.ELSE){
 					if(!select){
 						nextToken();
 						statement();
@@ -1081,22 +1060,22 @@ public class Parser {
 							}
 						}
 					}
-			}else{
-					
+				}else{
+
 				}
-		
-		}else{
-			throw new ParserException("(SELECTION)Unexpected symbol"+lookahead+" found");
-		}
+
+			}else{
+				throw new ParserException("(SELECTION)Unexpected symbol"+lookahead+" found");
+			}
 		}
 	}
-	  private void nextToken()
-	  {
-	    tokens.pop();
-	    // at the end of input we return an epsilon token
-	    if (tokens.isEmpty())
-	      lookahead = new Token(Token.EPSILON, "");
-	    else
-	      lookahead = tokens.getFirst();
-	  }
+	private void nextToken()
+	{
+		tokens.pop();
+		// at the end of input we return an epsilon token
+		if (tokens.isEmpty())
+			lookahead = new Token(Token.EPSILON, "");
+		else
+			lookahead = tokens.getFirst();
+	}
 }

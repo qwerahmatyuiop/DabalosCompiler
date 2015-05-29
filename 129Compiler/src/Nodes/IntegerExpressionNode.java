@@ -3,8 +3,8 @@ package Nodes;
 public class IntegerExpressionNode implements Node {
 
 	private int value;
-	
-	
+
+
 	public IntegerExpressionNode(int value) {
 		super();
 		this.value = value;

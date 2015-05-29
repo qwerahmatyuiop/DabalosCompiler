@@ -17,8 +17,6 @@ public interface Node {
 	public static final int EQUALITY_EXPRESSION_NODE = 11;
 	public static final int ADDITIVE_EXPRESSION_NODE = 12;
 	public static final int MULTIPLICATIVE_EXPRESSION_NODE = 13;
-	
-	
 	public static final int FUNCTION_DEFINITION_NODE = 14;
 	public static final int PARAMETERS_NODE = 15;
 	public static final int ASSIGNMENT_OPERATOR_NODE = 16;
@@ -36,8 +34,8 @@ public interface Node {
 	public static final int SELECTION_STATEMENT_NODE = 28;
 	public static final int ITERATION_STATEMENT_NODE = 29;
 	public static final int JUMP_STATEMENT_NODE = 30;
-	
-	 public int getType();
-	 public Object getValue();
-	
+
+	public int getType();
+	public Object getValue();
+
 }

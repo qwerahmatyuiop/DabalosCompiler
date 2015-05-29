@@ -29,7 +29,7 @@ Terminals:					Meaning
 	||                      OR_OP/ or operator
 	(-)?[0-9]+\\.[0-9]+     FLOAT_LIT
 	(-)?[0-9]+              INT_LIT
-	"\".[^\"]*\""           STRING_LIT
+	\.[^\]*\           STRING_LIT
 	--                      DEC_OP
 	++                      INC OP
 	=                       ASSIGN
@@ -72,11 +72,11 @@ Non-Terminals and Grammar:
 	
 	*creating functions and variables:
 
-	external_declaration -> 	"FUNC" function_definition
- 								| "GLOBAL" declaration
+	external_declaration -> 	FUNC function_definition
+ 								| GLOBAL declaration
  	function_definition -> 		type_specifier IDENTIFIER '(' ')' compound_statement
 
-	type_specifier -> 			"VOID"|"CHAR"|"STRING"|"INT"|"BOOLEAN"|"FLOAT"
+	type_specifier -> 			VOID|CHAR|STRING|INT|BOOLEAN|FLOAT
 
 	declaration ->				type_specifier init_declarator_list ';'
 
@@ -114,22 +114,22 @@ Non-Terminals and Grammar:
 	block_item->					 declaration
 									| statement
 
-	selection_statement->			"if" '(' assignment_expression ')' statement
-									| "if" '(' assighment_expression ')' statement "else" statement
+	selection_statement->			if '(' assignment_expression ')' statement
+									| if '(' assighment_expression ')' statement else statement
 
-	iteration_statement->			"while" '(' assignment_expression ')' statement
+	iteration_statement->			while '(' assignment_expression ')' statement
 		
-	print_statement->				"print" '(' assignment_expression ')' ';'
+	print_statement->				print '(' assignment_expression ')' ';'
 
-	println_statement->				"println" '(' assignment_expression ')' ';'
+	println_statement->				println '(' assignment_expression ')' ';'
 
-	arrayAdd_statement->			"Array.Add" '(' IDENTIFIER ','' primary_expression  ')' ';'
+	arrayAdd_statement->			Array.Add '(' IDENTIFIER ','' primary_expression  ')' ';'
 
-	writeFile_statement ->			"writeFile" '('STRING_LIT ',' IDENTIFIER')' ';'
+	writeFile_statement ->			writeFile '('STRING_LIT ',' IDENTIFIER')' ';'
 
-	writeIntFile_statement ->		"writeIntFile" '('STRING_LIT ',' IDENTIFIER')' ';'
+	writeIntFile_statement ->		writeIntFile '('STRING_LIT ',' IDENTIFIER')' ';'
 
-	call_statement ->				"call" IDENTIFIER '(' ')' ';'
+	call_statement ->				call IDENTIFIER '(' ')' ';'
 
 	expression_statement->			assignment_expression ';' | ';'
 
@@ -145,7 +145,7 @@ Non-Terminals and Grammar:
 									| getSD_expression
 									| readIntFile_expression
 
-	assignment_operator->			"="
+	assignment_operator->			=
 
 	logical_or_expression->			logical_and_expression
 									| logical_and_expression {{OR_OP logical_and_expression}
@@ -183,25 +183,25 @@ Non-Terminals and Grammar:
 									| BOOLEAN_LITERAL
 									
 
-	reverse_expression->			"reverse" '(' IDENTIFIER ')' 
-									| "reverse" '(' STRING_LIT')'
+	reverse_expression->			reverse '(' IDENTIFIER ')' 
+									| reverse '(' STRING_LIT')'
 	
-	scan_expression->				"scan"		'('')'
+	scan_expression->				scan		'('')'
 	
-	readFile_expression->			"readFile"	'('(IDENTIFIER|STRING_LIT)')'
+	readFile_expression->			readFile	'('(IDENTIFIER|STRING_LIT)')'
 	
-	arrayFunctions->				"Array.Get" '('IDENTIFIER',' integer_instances')'
-									|"Array.Remove" '('IDENTIFIER','integer_instances')'
-									|"Array.Sort" '('IDENTIFIER')'
-									|"Array.DescSort" '('IDENTIFIER')'
+	arrayFunctions->				Array.Get '('IDENTIFIER',' integer_instances')'
+									|Array.Remove '('IDENTIFIER','integer_instances')'
+									|Array.Sort '('IDENTIFIER')'
+									|Array.DescSort '('IDENTIFIER')'
 	
 	integer_instances -> 			IDENTIFIER|INT_LIT
 	
-	random_expression->				"rand" '(' INTEGER_LIT ')'
+	random_expression->				rand '(' INTEGER_LIT ')'
 	
-	getSD_expression->				"getSD" '('integer_instances',' integer_instances')'
+	getSD_expression->				getSD '('integer_instances',' integer_instances')'
 	
-	readIntFile_expression->		"readIntFile" '('(IDENTIFIER|STRING_LIT)',' IDENTIFIER')'
+	readIntFile_expression->		readIntFile '('(IDENTIFIER|STRING_LIT)',' IDENTIFIER')'
 	
 	Variables Scoping:
 		All variables should be declared Globally.

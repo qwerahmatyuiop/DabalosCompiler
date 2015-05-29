@@ -3,8 +3,8 @@ package Nodes;
 public class FloatExpressionNode implements Node {
 
 	private float value;
-	
-	
+
+
 	public FloatExpressionNode(float value) {
 		super();
 		this.value = value;

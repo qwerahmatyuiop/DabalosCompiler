@@ -3,7 +3,7 @@ package Nodes;
 public class StringExpressionNode implements Node {
 
 	private String value;
-	
+
 	public StringExpressionNode(String value) {
 		super();
 		this.value = value;

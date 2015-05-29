@@ -10,7 +10,7 @@ public class ArrayExpressionNode extends IdentifierExpressionNode implements Nod
 	private ArrayList<Integer> values = new ArrayList<Integer>();
 	private boolean valueSet;
 	private String dataType;
-	
+
 
 	public ArrayExpressionNode(String name) {
 		super(name);
@@ -23,15 +23,15 @@ public class ArrayExpressionNode extends IdentifierExpressionNode implements Nod
 		// TODO Auto-generated method stub
 		return Node.IDENTIFIER_ARRAY_NODE;
 	}
-	
+
 	@Override
 	public ArrayList<Integer> getValue() {
 		// TODO Auto-generated method stub
-		 if (valueSet)
-		      return values;
-		    else
-		      throw new EvaluationException("Variable '" 
-		        + name + "' was not initialized.");
+		if (valueSet)
+			return values;
+		else
+			throw new EvaluationException("Variable '" 
+					+ name + "' was not initialized.");
 	}
 	public String getName(){
 		return this.name;

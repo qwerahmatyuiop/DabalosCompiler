@@ -3,8 +3,8 @@ package Nodes;
 public class BooleanExpressionNode implements Node {
 
 	private Boolean value;
-	
-	
+
+
 	public BooleanExpressionNode(Boolean value) {
 		super();
 		this.value = value;

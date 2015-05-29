@@ -1,7 +1,12 @@
 package Exceptions;
 
 public class ParserException extends RuntimeException {
-	  public ParserException(String msg) {
+	  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ParserException(String msg) {
 	    super(msg);
 	  }
 }

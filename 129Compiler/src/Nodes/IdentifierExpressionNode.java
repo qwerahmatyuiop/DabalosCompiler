@@ -7,7 +7,7 @@ public class IdentifierExpressionNode implements Node{
 	private Object value;
 	private boolean valueSet;
 	private String dataType;
-	
+
 
 	public IdentifierExpressionNode(String name) {
 		super();
@@ -26,15 +26,15 @@ public class IdentifierExpressionNode implements Node{
 		// TODO Auto-generated method stub
 		return Node.IDENTIFIER_NODE;
 	}
-	
+
 	@Override
 	public Object getValue() {
 		// TODO Auto-generated method stub
-		 if (valueSet)
-		      return value;
-		    else
-		      throw new EvaluationException("Variable '" 
-		        + name + "' was not initialized.");
+		if (valueSet)
+			return value;
+		else
+			throw new EvaluationException("Variable '" 
+					+ name + "' was not initialized.");
 	}
 	public String getName(){
 		return this.name;

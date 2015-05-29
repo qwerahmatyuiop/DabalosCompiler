@@ -26,9 +26,10 @@ GLOBAL float y =0;
 GLOBAL float ysum = 0;
 GLOBAL float SDX = 0.1;
 GLOBAL float SDY = 0.1;
+GLOBAL int input = 0;
 
 
-func void HelloWorldprint(){
+func void HelloWorld(){
 	print("Hello World");
 }
 func void fibo(){
@@ -69,11 +70,12 @@ func void counto(){
 	}
 }
 func void palindrome(){
-	print("Input");
+	print("Input(Put double quotes between):");
 	s1 = scan();
 	s2 = reverse(s1);
 	print(s2 == s1);
 }
+
 func void arrayManipulation(){
 	a = scan();
 	b = 0;
@@ -183,13 +185,75 @@ func void r4nd0m(){
 func void readIntSortWrite(){
 s1 = "number.txt";
 array1 = readIntFile(s1,array1);
-array1 = Array.DescSort(array1);
+array1 = Array.Sort(array1);
 writeIntFile("number3.txt", array1);
  }
  
  func void Manualprinter(){
  	s1 = scan();
- 	s2 = readFile("expressions.txt");
+ 	s2 = readFile("LanguageSpecification.txt");
  	writeFile(s1, s2);
  }
-call Manualprinter();
+ 
+ func void MenuPrint(){
+ 	println(" ");
+ 	println("**************MENU**************");
+ 	println("[1] Print Hello World");
+ 	println("[2] Counting function");
+ 	println("[3] Sort numbers in a file");
+ 	println("[4] Print Fibonacci sequence");
+ 	println("[5] Array Operations");
+ 	println("[6] Check if Palindrome");
+ 	println("[7] Print Manual");
+ 	println("[8] Random Numbers Standard Deviation");
+ 	println("[9] Exit");
+ 	println("*******************************");
+ 	print("Input: ");
+ }
+ 
+ 
+ func void main(){
+ 	while(input != 9){	
+ 		call MenuPrint();
+ 		input = scan();
+ 		if(input == 1){
+ 			call HelloWorld();
+ 		}
+ 		else{
+ 			if(input == 2){
+ 				call counto();
+ 			}
+ 			else{
+ 				if(input == 3){
+ 					call readIntSortWrite();
+ 				}
+ 				else{
+ 					if(input == 4){
+ 						call fibo();
+ 					}
+ 					else{
+ 						if(input == 5){
+ 							call arrayManipulation();
+ 						}
+ 						else{
+ 							if(input == 6){
+ 								call palindrome();
+ 							}
+ 							else{
+ 								if(input == 7){
+ 								call Manualprinter();
+ 								}
+ 								else{
+ 									if(input == 8){
+ 										call r4nd0m();
+ 									}
+ 								}
+ 							}
+ 						}
+ 					}
+ 				}
+ 			}
+ 		}
+ 	}
+ }
+ call main();
